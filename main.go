@@ -20,11 +20,8 @@ func main() {
 	
 	router.Use(gin.Logger())
 
-	router.Group("/api")
-	{
-		router.GET("/users", controllers.GetAllUsers)
-		router.POST("/users", controllers.CreateUser)
-	}
+	router.GET("/api/users", controllers.GetAllUsers)
+	router.POST("/api/users", controllers.CreateUser)
 
 	router.Run("localhost:3000")
 }
