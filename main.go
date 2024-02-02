@@ -2,7 +2,15 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/iamtaufik/coursehub/config"
+	"github.com/joho/godotenv"
 )
+
+
+func init() {
+	godotenv.Load()
+	config.ConnectToDB()
+}
 
 
 func main() {

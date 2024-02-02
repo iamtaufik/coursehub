@@ -1,4 +1,4 @@
-module coursehub
+module github.com/iamtaufik/coursehub
 
 go 1.21.0
 
