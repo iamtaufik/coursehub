@@ -10,6 +10,7 @@ import (
 func init() {
 	godotenv.Load()
 	config.ConnectToDB()
+	config.SyncDatabase()
 }
 
 
