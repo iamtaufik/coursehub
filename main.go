@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/iamtaufik/coursehub/config"
+	"github.com/iamtaufik/coursehub/controllers"
 	"github.com/joho/godotenv"
 )
 
@@ -18,7 +19,12 @@ func main() {
 	router := gin.Default()
 	
 	router.Use(gin.Logger())
-	
 
-	router.Run("localhost:8080")
+	router.Group("/api")
+	{
+		router.GET("/users", controllers.GetAllUsers)
+		router.POST("/users", controllers.CreateUser)
+	}
+
+	router.Run("localhost:3000")
 }
