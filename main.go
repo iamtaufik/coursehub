@@ -18,7 +18,8 @@ func init() {
 func main() {
 	router := gin.Default()
 	router.Use(gin.Logger())
-	
+	gin.SetMode(gin.ReleaseMode)
+
 	routes.RegisterRoutes(router)
 
 	router.Run("localhost:3000")
