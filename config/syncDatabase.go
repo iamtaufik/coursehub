@@ -9,11 +9,11 @@ import (
 func SyncDatabase() {
 	err := DB.AutoMigrate(
 		&models.User{}, 
-		&models.Profile{}, 
-		&models.Course{},
-		&models.Category{}, 
-		&models.Chapter{},
-		&models.Module{},
+		&models.Course{}, 
+		// &models.Category{},
+		// &models.Course{},
+		// &models.Chapter{},
+		// &models.Module{},
 	)
 	if err != nil {
 		log.Fatal("Error migrating the database. Error: ", err)

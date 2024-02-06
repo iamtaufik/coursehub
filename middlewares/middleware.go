@@ -41,14 +41,19 @@ func VerifyToken(c *gin.Context){
 		var user models.User
 		config.DB.First(&user, claims["sub"])
 
-		if user.ID == 0 {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		}
-
+		user.Password = ""
 		c.Set("user", user)
 		c.Next()
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
 	}
 
+}
+
+func IsAdmin(c *gin.Context){
+	user := c.MustGet("user").(models.User)
+	if user.Role != models.Admin {
+		c.AbortWithStatus(http.StatusForbidden)
+	}
+	c.Next()
 }
