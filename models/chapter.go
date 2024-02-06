@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Chapter struct {
 	gorm.Model
-	CourseID  uint     `json:"course_id"` 
+	CourseID  uint     `json:"-"` 
 	Name      string   `json:"name"`
-	Modules   []Module `gorm:"constraint:OnDelete:CASCADE"`
+	Modules   []Module `gorm:"constraint:OnDelete:CASCADE" json:"modules"`
 }

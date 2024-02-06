@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	authenticationRoute "github.com/iamtaufik/coursehub/routes/authentication"
+	courseRoute "github.com/iamtaufik/coursehub/routes/course"
 	usersRoute "github.com/iamtaufik/coursehub/routes/users"
 )
 
@@ -12,5 +13,6 @@ func RegisterRoutes(router *gin.Engine) {
 	{
 		usersRoute.RegisterUserRoutes(apiGroup.Group("/users"))
 		authenticationRoute.RegisterAuthRoutes(apiGroup.Group("/auth"))
+		courseRoute.RegisterCourseRoutes(apiGroup.Group("/courses"))
 	}
 }

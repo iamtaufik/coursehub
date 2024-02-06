@@ -63,7 +63,7 @@ func Login(c *gin.Context) {
 	var user models.User
 	config.DB.First(&user, "email = ?", body.Email)
 
-	if user.ID == 0 {
+	if user.ID == 0{
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message":"Invalid email or password",
 		})

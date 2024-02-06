@@ -17,13 +17,13 @@ type Course struct {
 	gorm.Model
 	Title          string		  	`json:"title"`
 	Description    string	  	  	`json:"description"`
-	Image          string	  	  	`gorm:"default: NULL" json:"image"`
-	TelegramGroup  string		  	`json:"telegram_group"`
+	Image          *string	  	  	`gorm:"default: NULL" json:"image"`
+	TelegramGroup  *string		  	`gorm:"default: NULL" json:"telegram_group"`
 	Requirements   string		  	`json:"requirements"`
 	Level          Levels         	`gorm:"default:beginner" json:"level"`
 	Price          int			  	`json:"price"`
 	Author         string		  	`json:"author"`
 	CategoryID     uint			  	`json:"category_id"`
-	Chapters 	   []Chapter      	`gorm:"constraint:OnDelete:CASCADE"`
-	Users		   []*User         	`gorm:"many2many:user_courses;"`
+	Chapters 	   []Chapter      	`gorm:"constraint:OnDelete:CASCADE" json:"chapters"`
+	Users		   []*User         	`gorm:"many2many:user_courses;" json:"-"`
 }

@@ -6,7 +6,7 @@ import (
 
 type Module struct {
 	gorm.Model
-	ChapterID 	uint	`json:"chapter_id"`
+	ChapterID 	uint	`json:"-"`
 	Title     	string	`json:"title"`
 	Duration  	int		`json:"duration"`	
 	URL       	string	`json:"url"`
