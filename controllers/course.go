@@ -78,7 +78,7 @@ func CreateCourse(c *gin.Context){
 
 func GetCourses(c *gin.Context){
 	var courses []models.Course
-	config.DB.Preload("Chapters").Preload("Chapters.Modules").Find(&courses)
+	config.DB.Find(&courses)
 
 	c.JSON(http.StatusOK, gin.H{"data": courses})
 }
