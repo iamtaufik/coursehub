@@ -10,8 +10,8 @@ import (
 func SyncDatabase() {
 	err := DB.AutoMigrate(
 		&models.User{}, 
-		&models.Course{}, 
 		&models.Category{},
+		&models.Course{}, 
 		&models.Chapter{},
 		&models.Module{},
 	)
