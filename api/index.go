@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ func init() {
 }
 
 
-func main() {
+func Handler() {
 	router := gin.Default()
 	router.Use(gin.Logger())
 	gin.SetMode(gin.ReleaseMode)
