@@ -17,7 +17,6 @@ const (
 
 type Course struct {
 	ID        		uint 		`gorm:"primarykey" json:"id"`
-	CreatedAt 		time.Time 	`json:"created_at"`
 	UpdatedAt 		time.Time 	`json:"-"`
 	DeletedAt 		gorm.DeletedAt `gorm:"index" json:"-"`
 	Title          string		  	`json:"title"`
@@ -31,4 +30,5 @@ type Course struct {
 	CategoryID     uint			  	`json:"category_id"`
 	Chapters 	   []Chapter      	`gorm:"constraint:OnDelete:CASCADE" json:"chapters"`
 	Users		   []*User         	`gorm:"many2many:user_courses;" json:"-"`
+	CreatedAt 		time.Time 	`json:"created_at"`
 }

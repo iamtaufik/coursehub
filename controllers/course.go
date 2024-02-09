@@ -89,3 +89,58 @@ func GetCourse(c *gin.Context){
 
 	c.JSON(http.StatusOK, gin.H{"data": course})
 }
+
+func UpdateCourse(c *gin.Context){
+	var body struct {
+		Title 		string `json:"title" binding:"required"`
+		Description string `json:"description" binding:"required"`
+		Image 		*string `json:"image"`
+		TelegramGroup *string `json:"telegram_group"`
+		Requirements string `json:"requirements" binding:"required"`
+		Level 		string `json:"level" binding:"required"`
+		Price 		int `json:"price" binding:"required"`
+		Author 		string `json:"author" binding:"required"`
+		CategoryID 	uint `json:"category_id" binding:"required"`
+	}
+
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request"})
+		return
+	}
+
+	var course models.Course
+	config.DB.First(&course, "id = ?", c.Param("id"))
+
+	if course.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Course not found"})
+		return
+	}
+
+	course.Title = body.Title
+	course.Description = body.Description
+	course.Image = body.Image
+	course.TelegramGroup = body.TelegramGroup
+	course.Requirements = body.Requirements
+	course.Level = models.Levels(body.Level)
+	course.Price = body.Price
+	course.Author = body.Author
+	course.CategoryID = body.CategoryID
+
+	config.DB.Save(&course)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Course updated successfully"})
+}
+
+func DeleteCourse(c *gin.Context){
+	var course models.Course
+	config.DB.First(&course, "id = ?", c.Param("id"))
+
+	if course.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Course not found"})
+		return
+	}
+
+	config.DB.Delete(&course)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Course deleted successfully"})
+}
