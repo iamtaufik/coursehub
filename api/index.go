@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/iamtaufik/coursehub/config"
 	"github.com/iamtaufik/coursehub/routes"
@@ -8,19 +10,19 @@ import (
 )
 
 
+var (
+	app *gin.Engine
+)
+
 func init() {
 	godotenv.Load()
 	config.ConnectToDB()
 	config.SyncDatabase()
+	app = gin.Default()
+	routes.RegisterRoutes(app)
 }
 
 
-func Handler() {
-	router := gin.Default()
-	router.Use(gin.Logger())
-	gin.SetMode(gin.ReleaseMode)
-
-	routes.RegisterRoutes(router)
-
-	router.Run("localhost:3000")
+func Handler(w http.ResponseWriter, r *http.Request) {
+	app.ServeHTTP(w, r)
 }
