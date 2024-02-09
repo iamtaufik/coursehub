@@ -82,3 +82,10 @@ func GetCourses(c *gin.Context){
 
 	c.JSON(http.StatusOK, gin.H{"data": courses})
 }
+
+func GetCourse(c *gin.Context){
+	var course models.Course
+	config.DB.Preload("Chapters").Preload("Chapters.Modules").First(&course, "id = ?", c.Param("id"))
+
+	c.JSON(http.StatusOK, gin.H{"data": course})
+}
