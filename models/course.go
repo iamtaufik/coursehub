@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -14,7 +16,10 @@ const (
 
 
 type Course struct {
-	gorm.Model
+	ID        		uint 		`gorm:"primarykey" json:"id"`
+	CreatedAt 		time.Time 	`json:"created_at"`
+	UpdatedAt 		time.Time 	`json:"-"`
+	DeletedAt 		gorm.DeletedAt `gorm:"index" json:"-"`
 	Title          string		  	`json:"title"`
 	Description    string	  	  	`json:"description"`
 	Image          *string	  	  	`gorm:"default: NULL" json:"image"`
