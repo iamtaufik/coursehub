@@ -124,8 +124,8 @@ func JoinCourse(c *gin.Context){
 	config.DB.First(&course, "id = ?", c.Param("id"))
 	
 	// check if user is already enrolled in the course
-	for _, course := range user.Courses {
-		if course.ID == course.ID {
+	for _, userCourse := range user.Courses {
+		if userCourse.ID == course.ID {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "You are already enrolled in this course"})
 			return
 		}
