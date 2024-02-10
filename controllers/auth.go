@@ -8,16 +8,13 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
 	"github.com/iamtaufik/coursehub/config"
+	"github.com/iamtaufik/coursehub/dto"
 	"github.com/iamtaufik/coursehub/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func Register(c *gin.Context) {
-	var body struct {
-		Username string `json:"username" binding:"required"`
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
+	var body dto.RegisterDto
 
 	if c.Bind(&body) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request"})
@@ -50,10 +47,7 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	var body struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
+	var body dto.LoginDto
 
 	if c.Bind(&body) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request"})
@@ -99,11 +93,7 @@ func Login(c *gin.Context) {
 }
 
 func RegisterAdmin(c *gin.Context){
-	var body struct {
-		Username string `json:"username" binding:"required"`
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
+	var body dto.RegisterDto
 
 	if c.Bind(&body) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request"})
@@ -137,10 +127,7 @@ func RegisterAdmin(c *gin.Context){
 }
 
 func LoginAdmin(c *gin.Context) {
-	var body struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
+	var body dto.LoginDto
 
 	if c.Bind(&body) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request"})

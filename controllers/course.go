@@ -5,31 +5,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/iamtaufik/coursehub/config"
+	"github.com/iamtaufik/coursehub/dto"
 	"github.com/iamtaufik/coursehub/models"
 )
 
 func CreateCourse(c *gin.Context){
-	var body struct {
-		Title 		string `json:"title" binding:"required"`
-		Description string `json:"description" binding:"required"`
-		Image 		*string `json:"image"`
-		TelegramGroup *string `json:"telegram_group"`
-		Requirements string `json:"requirements" binding:"required"`
-		Level 		string `json:"level" binding:"required"`
-		Price 		int `json:"price" binding:"required"`
-		Author 		string `json:"author" binding:"required"`
-		Chapters    []struct {
-			Name string `json:"name" binding:"required"`
-			Modules []struct {
-				Title string `json:"title" binding:"required"`
-				Duration int `json:"duration" binding:"required"`
-				URL string `json:"url" binding:"required"`
-				IsTrailer bool `json:"is_trailer" binding:"required"`
-			} `json:"modules" binding:"required"`
-		} `json:"chapters" binding:"required"`
-		CategoryID 	uint `json:"category_id" binding:"required"`
-
-	}
+	var body dto.CreateCourseDto
 
 	if c.Bind(&body) != nil {
 //  show details of the error
@@ -124,7 +105,7 @@ func JoinCourse(c *gin.Context){
 	config.DB.First(&course, "id = ?", c.Param("id"))
 	
 	// check if user is already enrolled in the course
-	for _, userCourse := range user.Courses {
+	for _, userCourse := range user.Courses   {
 		if userCourse.ID == course.ID {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "You are already enrolled in this course"})
 			return
