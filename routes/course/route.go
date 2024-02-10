@@ -8,6 +8,8 @@ import (
 
 func RegisterCourseRoutes(router *gin.RouterGroup) {
 	router.POST("/", middlewares.VerifyToken, middlewares.IsAdmin, controllers.CreateCourse)
+	router.GET("/join/:id", middlewares.VerifyToken, controllers.JoinCourse)
+	router.GET("/me", middlewares.VerifyToken, controllers.MyCourses)
 	router.GET("/", controllers.GetCourses)
 	router.GET("/:id", controllers.GetCourse)
 	// router.PUT("/course/:id", middlewares.VerifyToken, controllers.UpdateCourse)

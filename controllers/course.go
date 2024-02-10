@@ -115,6 +115,30 @@ func GetCourseByCategory(c *gin.Context){
 	c.JSON(http.StatusOK, gin.H{"data": courses})
 }
 
+func JoinCourse(c *gin.Context){
+	var user models.User
+	config.DB.First(&user, "id = ?", c.MustGet("user").(models.User).ID)
+
+	var course models.Course
+	config.DB.First(&course, "id = ?", c.Param("id"))
+
+	if course.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Course not found"})
+		return
+	}
+
+	config.DB.Model(&user).Association("Courses").Append(&course)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Course joined successfully"})
+}
+
+func MyCourses(c *gin.Context){
+	var user models.User
+	config.DB.Preload("Courses").First(&user, "id = ?", c.MustGet("user").(models.User).ID)
+
+	c.JSON(http.StatusOK, gin.H{"data": user.Courses})
+}
+
 func UpdateCourse(c *gin.Context){
 	var body struct {
 		Title 		string `json:"title" binding:"required"`
