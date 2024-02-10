@@ -119,9 +119,17 @@ func JoinCourse(c *gin.Context){
 	var user models.User
 	config.DB.First(&user, "id = ?", c.MustGet("user").(models.User).ID)
 
+	
 	var course models.Course
 	config.DB.First(&course, "id = ?", c.Param("id"))
-
+	
+	// check if user is already enrolled in the course
+	for _, course := range user.Courses {
+		if course.ID == course.ID {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "You are already enrolled in this course"})
+			return
+		}
+	}
 	if course.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"message": "Course not found"})
 		return
