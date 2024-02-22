@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/iamtaufik/coursehub/config"
@@ -27,34 +28,48 @@ func CreateCourse(c *gin.Context){
 		Price: body.Price,
 		CategoryID: body.CategoryID,
 	}
-	
-	result := config.DB.Create(&course)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
 
-	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": result.Error})
-		return
-	}
+		result := config.DB.Create(&course)
 
-	for _, chapter := range body.Chapters {
-
-		var newChapter models.Chapter
-		newChapter.Name = chapter.Name
-		newChapter.CourseID = course.ID
-		config.DB.Create(&newChapter)
-
-		for _, module := range chapter.Modules {
-			var newModule models.Module
-			newModule.Title = module.Title
-			newModule.Duration = module.Duration
-			newModule.URL = module.URL
-			newModule.IsTrailer = module.IsTrailer
-			newModule.ChapterID = newChapter.ID
-			config.DB.Create(&newModule)
+		if result.Error != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": result.Error})
+			return
 		}
-	}
+
+		for _, chapter := range body.Chapters {
+
+			var newChapter models.Chapter
+			newChapter.Name = chapter.Name
+			newChapter.CourseID = course.ID
+			if err := config.DB.Create(&newChapter).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+				return
+			}
+
+			for _, module := range chapter.Modules {
+				var newModule models.Module
+				newModule.Title = module.Title
+				newModule.Duration = module.Duration
+				newModule.URL = module.URL
+				newModule.IsTrailer = module.IsTrailer
+				newModule.ChapterID = newChapter.ID
+				if err := config.DB.Create(&newModule).Error; err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+					return
+				}
+			}
+		}
 
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Course created successfully"})
+		c.JSON(http.StatusCreated, gin.H{"message": "Course created successfully"})
+	}()
+
+	wg.Wait()
+	c.Status(http.StatusCreated)
 }
 
 func GetCourses(c *gin.Context){
@@ -63,37 +78,70 @@ func GetCourses(c *gin.Context){
 		return
 	}
 	var courses []models.Course
-	config.DB.Find(&courses)
+	
+	var wg sync.WaitGroup
+    wg.Add(1)
+	go func() {
+		defer wg.Done()
 
-	c.JSON(http.StatusOK, gin.H{"data": courses})
+		if err := config.DB.Find(&courses).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"data": courses})
+		}()
+	wg.Wait()	
+	c.Status(http.StatusOK)
 }
 
 func GetCourse(c *gin.Context){
 	var course models.Course
-	config.DB.Preload("Chapters").Preload("Chapters.Modules").First(&course, "id = ?", c.Param("id"))
+	
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := config.DB.Preload("Chapters").Preload("Chapters.Modules").First(&course, "id = ?", c.Param("id")).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data kursus"})
+            return
+		}
 
-	c.JSON(http.StatusOK, gin.H{"data": course})
+		c.JSON(http.StatusOK, gin.H{"data": course})
+	}()
+
+	wg.Wait()
+	c.Status(http.StatusOK)
 }
 
 func GetCourseByCategory(c *gin.Context){
 	var courses []models.Course
 	var category models.Category
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
 		//  search category ny name use LIKE
-	config.DB.Where("name LIKE ?", "%" + c.Query("category") + "%").First(&category)
-	
-	if category.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"message": "Category not found"})
-		return
-	}
+		config.DB.Where("name LIKE ?", "%" + c.Query("category") + "%").First(&category)
+		
+		if category.ID == 0 {
+			c.JSON(http.StatusNotFound, gin.H{"message": "Category not found"})
+			return
+		}
 
-	config.DB.Where("category_id = ?",  category.ID).Find(&courses)
-	
-	if len(courses) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"message": "No courses found"})
-		return
-	}
+		config.DB.Where("category_id = ?",  category.ID).Find(&courses)
+		
+		if len(courses) == 0 {
+			c.JSON(http.StatusNotFound, gin.H{"message": "No courses found"})
+			return
+		}
 
-	c.JSON(http.StatusOK, gin.H{"data": courses})
+		c.JSON(http.StatusOK, gin.H{"data": courses})
+	}()
+
+	wg.Wait()
+	c.Status(http.StatusOK)
 }
 
 func JoinCourse(c *gin.Context){
